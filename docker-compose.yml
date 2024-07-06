@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+  selfhost-image:
+    build:
+      context: .
+    container_name: selfhost-image
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./output:/app/files
+    env_file:
+      - .env
+    environment:
+      - ENV_FILE=${ENV_FILE:-.env}
+      # - REPOSITORIES_DIR=${REPOSITORIES_DIR}
+      # - PIP_CACHE_DIR=${PIP_CACHE_DIR}
+    networks:
+      - app-network
+
+  fooocus:
+    image: konieshadow/fooocus-api
+    container_name: fooocus
+    ports:
+      - "8888:8888"
+    environment:
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - NVIDIA_VISIBLE_DEVICES=all
+      # - REPOSITORIES_DIR=${REPOSITORIES_DIR}
+      # - PIP_CACHE_DIR=${PIP_CACHE_DIR}
+    volumes:
+      - ./repositories:/app/repositories
+      - ./cache/pip:/root/.cache/pip
+      - fooocus-models:/content/app/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    networks:
+      - app-network
+    depends_on:
+      - selfhost-image
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  fooocus-models:  # Define the persistent volume
+  fooocus-data:  # Define the persistent volume
