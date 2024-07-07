@@ -11,12 +11,12 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@app.route('/v1/authenticate')
+@app.route('/image/v1/authenticate')
 @validate_api_key(pass_api_key=False)
 def authenticate():
     return jsonify({'message': 'API key is valid'}), 200
 
-@app.route('/v1/create-image', methods=['POST'])
+@app.route('/image/v1/create-image', methods=['POST'])
 @validate_api_key(pass_api_key=True)
 def proxy(api_key):
     logger.info("Proxy route hit")
@@ -36,11 +36,13 @@ def proxy(api_key):
     # Forward the request to the Fooocus API
     try:
         filename = generate_random_filename()
-        data["save_name"] = f"{Config.IMAGE_OUTPUT_DIR}/{api_key}/{filename}" 
-        logger.info(f"Filename: {data['save_name']}")
+        save_path = f"{api_key}/{filename}"
+        data["save_name"] = f"{save_path}"
+        logger.info(f"Save path: {data['save_name']}")
+
         response = requests.post(
-            'http://fooocus:8888/v1/generation/text-to-image', 
-            json=data, 
+            'http://fooocus:8888/v1/generation/text-to-image',
+            json=data,
             headers=headers
         )
         response.raise_for_status()  # Raise an exception for HTTP errors

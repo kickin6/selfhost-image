@@ -14,11 +14,23 @@ logger = logging.getLogger(__name__)
 
 def directory_exists(api_key):
     """Check if a directory exists for the given API key."""
-    logger.debug("Checking if directory exists: %s/%s", Config.IMAGE_OUTPUT_DIR, api_key)
-    fullpath = os.path.normpath(os.path.join(Config.IMAGE_OUTPUT_DIR, api_key))
-    if not fullpath.startswith(Config.IMAGE_OUTPUT_DIR):
+    fullpath = os.path.normpath(os.path.join('/app/output', api_key))
+    logger.debug("Checking if directory exists: %s", fullpath)
+    if not fullpath.startswith('/app/output'):
         raise Exception("not allowed")
-    return os.path.isdir(fullpath)
+    
+    # Add detailed logging for debugging
+    directory_exists = os.path.isdir(fullpath)
+    logger.debug("Directory exists: %s", directory_exists)
+    
+    # Log directory contents and permissions
+    if directory_exists:
+        logger.debug("Contents of /app/output: %s", os.listdir('/app/output'))
+        logger.debug("Contents of %s: %s", fullpath, os.listdir(fullpath))
+        logger.debug("Permissions of /app/output: %s", oct(os.stat('/app/output').st_mode))
+        logger.debug("Permissions of %s: %s", fullpath, oct(os.stat(fullpath).st_mode))
+    
+    return directory_exists
 
 def get_api_key():
     return request.headers.get('x-api-key')
