@@ -9,14 +9,14 @@ from jsonschema import validate, ValidationError
 from .config import Config
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 def directory_exists(api_key):
     """Check if a directory exists for the given API key."""
-    fullpath = os.path.normpath(os.path.join('/app/output', api_key))
+    fullpath = os.path.normpath(os.path.join('/app/outputs', api_key))
     logger.debug("Checking if directory exists: %s", fullpath)
-    if not fullpath.startswith('/app/output'):
+    if not fullpath.startswith('/app/outputs'):
         raise Exception("not allowed")
     
     # Add detailed logging for debugging
@@ -25,9 +25,9 @@ def directory_exists(api_key):
     
     # Log directory contents and permissions
     if directory_exists:
-        logger.debug("Contents of /app/output: %s", os.listdir('/app/output'))
+        logger.debug("Contents of /app/outputs: %s", os.listdir('/app/outputs'))
         logger.debug("Contents of %s: %s", fullpath, os.listdir(fullpath))
-        logger.debug("Permissions of /app/output: %s", oct(os.stat('/app/output').st_mode))
+        logger.debug("Permissions of /app/outputs: %s", oct(os.stat('/app/outputs').st_mode))
         logger.debug("Permissions of %s: %s", fullpath, oct(os.stat(fullpath).st_mode))
     
     return directory_exists

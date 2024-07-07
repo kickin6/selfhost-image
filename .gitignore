@@ -10,11 +10,9 @@ venv/
 Pipfile
 Pipfile.lock
 
-# Cache directory
+# directories
 cache/
-
-# Movies directory
-movies/
+outputs/
 
 # Docker related files
 *.log

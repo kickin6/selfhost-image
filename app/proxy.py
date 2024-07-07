@@ -8,7 +8,7 @@ from .config import Config
 app = Flask(__name__)
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 @app.route('/image/v1/authenticate')
@@ -35,11 +35,7 @@ def proxy(api_key):
 
     # Forward the request to the Fooocus API
     try:
-        filename = generate_random_filename()
-        save_path = f"{api_key}/{filename}"
-        data["save_name"] = f"{save_path}"
-        logger.info(f"Save path: {data['save_name']}")
-
+        data["save_name"] = f"{api_key}"
         response = requests.post(
             'http://fooocus:8888/v1/generation/text-to-image',
             json=data,
